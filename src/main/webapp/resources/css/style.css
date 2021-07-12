@@ -1,0 +1,81 @@
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10%;
+  font-family: "San Francisco", Helvetica, Arial, san-serif;
+  background-color: bisque;
+}
+
+.logInBox {
+  width: 50%;
+  
+}
+
+.section1 {
+  height: 100px;
+  padding: 20px;
+  background-color: #01b3eb;
+  border-radius: 10px;
+}
+
+.section1 div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.grey {
+  color: rgba(243, 241, 239, 1);
+}
+
+#login {
+  color: white;
+  font-size: 40px;
+}
+
+#toSignUp{
+	text-decoration:none;
+	color:white;
+}
+
+.section2 {
+  background-color: white;
+  height: 300px;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.section2 input {
+  width: 300px;
+  height: 40px;
+  margin: 10px;
+}
+
+#passwordCheck {
+  width: 300px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+#passwordCheck span {
+  font-size: 10px;
+  color: #01b3eb;
+}
+
+#button {
+  margin-top: 10px;
+  width: 300px;
+  height: 60px;
+  background-color: #58b217;
+  color: white;
+  border: none;
+  font-size: large;
+}
