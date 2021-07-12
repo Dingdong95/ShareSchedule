@@ -40,7 +40,10 @@ public class HomeController {
 	}
 	
 	@PostMapping("/signIn")
-	public String signIn(@RequestParam("uCode") String uCode) {
+	public String signIn(@RequestParam("uCode") String uCode, @RequestParam("uPassword") String uPassword ) {
+		
+		System.out.println(uCode + "servlet까지 넘어옴" + uPassword);
+
 		
 		return "signIn";
 	}
