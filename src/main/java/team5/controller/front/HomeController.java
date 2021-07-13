@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,9 @@ import team5.services.bean.UserBean;
 @Controller
 public class HomeController {
 	
-	ModelAndView mv;
+	
+	ModelAndView mav;
+	@Autowired
 	Authentication auth;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
@@ -46,14 +49,15 @@ public class HomeController {
 	
 	@PostMapping("/signIn")
 	public ModelAndView signIn(@ModelAttribute AuthBean ab) {
-		return mv = auth.isAccessCtl(ab);
+		auth.isAccessCtl(ab);
+		return null;
 	}	
 	
 	
 	//@RequestMapping(value = "/signUp", method = RequestMethod.GET)
 		@PostMapping("/signUp")
 		public ModelAndView signUp(@ModelAttribute UserBean ub) {
-			return mv = auth.insMemberCtl(ub);
+			return mav = auth.insMemberCtl(ub);
 		}
 	
 		@PostMapping("/dupCheck")

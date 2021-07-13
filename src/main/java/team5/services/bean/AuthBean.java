@@ -16,7 +16,4 @@ public class AuthBean {
 	private String method;
 	private String publicIp;
 	private String privateIp;
-	private ArrayList<String> uInfo;
-	@DateTimeFormat(pattern ="yyyy-mm-dd")
-	private Date date;
 }

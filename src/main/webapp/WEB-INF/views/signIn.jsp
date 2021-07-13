@@ -14,7 +14,7 @@
   
   </head>
   <!-- <body onLoad="callMessage('${message }')">  -->
-  <body>
+  <body onLoad="getAjax('https://api.ipify.org', 'format=json', 'setPublicIp')">
     <div class="logInBox">
       <div class="section1">
         <div id="login">Sign in</div>
@@ -29,7 +29,7 @@
         <div id="passwordCheck">
           <span>비밀번호찾기</span>
         </div>
-        <button id="logInBtn">Log In</button>
+        <button id="logInBtn" onClick="sendAccessInfo()">Log In</button>
       </div>
     </div>
     <div>

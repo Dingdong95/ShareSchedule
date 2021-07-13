@@ -14,7 +14,6 @@ public class UserBean {
 	private String uCode;
 	private String uPassword;
 	private String uName;
-	private String phone;
 	private String email;
 	
 }
