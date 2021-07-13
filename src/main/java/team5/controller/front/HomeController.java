@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import oracle.net.aso.e;
+import team5.services.auth.Authentication;
+import team5.services.bean.AuthBean;
 import team5.services.bean.UserBean;
 
 /**
@@ -24,6 +27,9 @@ import team5.services.bean.UserBean;
  */
 @Controller
 public class HomeController {
+	
+	ModelAndView mv;
+	Authentication auth;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
@@ -36,45 +42,25 @@ public class HomeController {
 		return "signIn";
 	}
 	
-	
-	//@RequestMapping(value = "/signUp", method = RequestMethod.GET)
-	@GetMapping("/signUp")
-	public String signUp(Locale locale, Model model) {
-		
-		return "signUp";
-	}
-	
-	
-	
 	// 이때 bean의 variable 이름이랑 request로 넘어오는 parameter의 name이랑 같아야 자동으로 bean에 저장이됨.
 	
 	@PostMapping("/signIn")
-	public String signIn(@ModelAttribute UserBean ub) {
-		
-		System.out.println( ub.getUCode() + "bean으로" +  ub.getUPassword());
-
-		
-		return "signIn";
-	}
-	
-	@PostMapping("/signIn2")
-	public String signIn2(@ModelAttribute UserBean ub) {
-		System.out.println(ub.getUCode() + "이거 arrayList" + ub.getUPassword());
-		System.out.println("이거 날짜" + ub.getDate());
-		System.out.println(ub.getUInfo().get(0) + "이거 arrayList" + ub.getUInfo().get(1));
-		return "signIn";
-	}
-	
-	/*
-	@PostMapping("/signIn2")
-	public String signIn2(@RequestParam("Code")  ArrayList<String> code ) {
-		
-		System.out.println( code.get(0) + "arrayList로" + code.get(1));
-
-		
-		return "signIn";
-	}
-	*/
+	public ModelAndView signIn(@ModelAttribute AuthBean ab) {
+		return mv = auth.isAccessCtl(ab);
+	}	
 	
 	
+	//@RequestMapping(value = "/signUp", method = RequestMethod.GET)
+		@PostMapping("/signUp")
+		public ModelAndView signUp(@ModelAttribute UserBean ub) {
+			return mv = auth.insMemberCtl(ub);
+		}
+	
+		@PostMapping("/dupCheck")
+		public boolean dupCheck(@ModelAttribute AuthBean ab) {
+			boolean isAble = false;
+			isAble = auth.isdupId(ab);
+			return isAble;
+		}
+		
 }

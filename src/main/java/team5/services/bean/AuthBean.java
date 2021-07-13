@@ -8,13 +8,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 import lombok.Data;
 
 
-//member table 
+//accesshistory table 
 @Data
-public class UserBean {
+public class AuthBean {
 	private String uCode;
 	private String uPassword;
-	private String uName;
-	private String phone;
-	private String email;
-	
+	private String method;
+	private String publicIp;
+	private String privateIp;
+	private ArrayList<String> uInfo;
+	@DateTimeFormat(pattern ="yyyy-mm-dd")
+	private Date date;
 }

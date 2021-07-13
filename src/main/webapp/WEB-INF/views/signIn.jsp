@@ -24,8 +24,8 @@
         </div>
       </div>
       <div class="section2">
-        <input name="Code" type="text" placeholder="아이디" />
-        <input name="Code" type="password" placeholder="비밀번호" />
+        <input name="uCode" type="text" placeholder="아이디" />
+        <input name="uPassword" type="password" placeholder="비밀번호" />
         <div id="passwordCheck">
           <span>비밀번호찾기</span>
         </div>
