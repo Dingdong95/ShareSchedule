@@ -29,9 +29,11 @@
         <div id="passwordCheck">
           <span>비밀번호찾기</span>
         </div>
-
         <button id="logInBtn">Log In</button>
       </div>
+    </div>
+    <div>
+    	<input type="date" name = "date"/>
     </div>
   </body>
   <script type = "text/javascript" src= "resources/js/signIn.js"></script>

@@ -58,6 +58,15 @@ public class HomeController {
 	}
 	
 	@PostMapping("/signIn2")
+	public String signIn2(@ModelAttribute UserBean ub) {
+		System.out.println(ub.getUCode() + "이거 arrayList" + ub.getUPassword());
+		System.out.println("이거 날짜" + ub.getDate());
+		System.out.println(ub.getUInfo().get(0) + "이거 arrayList" + ub.getUInfo().get(1));
+		return "signIn";
+	}
+	
+	/*
+	@PostMapping("/signIn2")
 	public String signIn2(@RequestParam("Code")  ArrayList<String> code ) {
 		
 		System.out.println( code.get(0) + "arrayList로" + code.get(1));
@@ -65,7 +74,7 @@ public class HomeController {
 		
 		return "signIn";
 	}
-	
+	*/
 	
 	
 }
