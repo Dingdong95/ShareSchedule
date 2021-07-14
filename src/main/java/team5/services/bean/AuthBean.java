@@ -13,7 +13,7 @@ import lombok.Data;
 public class AuthBean {
 	private String uCode;
 	private String uPassword;
-	private String method;
+	private int method;
 	private String publicIp;
 	private String privateIp;
 }

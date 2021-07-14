@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- myBatisInterface와 package가 같기때문에 myBatisInterface에서 default 접근가능  -->
+<mapper namespace="team5.database.mapper.MybatisInterface">
+
+<!-- parameterType에 path설정까지 하지않으면 인식을 하지못함. 이걸 하려면 component scan을 할때 지정을 해줘야 함  -->
+
+<select id="isUcode" parameterType ="team5.services.bean.AuthBean" resultType="int">
+	SELECT COUNT(*) FROM MB WHERE MB_ID = #{uCode}
+</select>
+
+<select id="isAccess" parameterType ="team5.services.bean.AuthBean" resultType="int">
+	SELECT COUNT(*) FROM MB WHERE MB_ID = #{UCode} AND MB_PASSWORD = #{uPassword}
+</select>
+
+<select id ="selMemberInfo" parameterType = "team5.services.bean.AuthBean" resultType ="team5.services.bean.UserBean" >
+	SELECT MB_ID AS UCODE, MB_NAME AS UNAME, MB_EMAIL AS EMAIL FROM MB WHERE MB_ID = #{uCode}
+</select>
+
+
+<insert id="insMemberHistory" parameterType ="team5.services.bean.AuthBean">
+	INSERT INTO AH VALUES (#{uCode},SYSDATE,#{method},#{publicIp},#{privateIp})
+</insert>
+
+<insert id="insMember" parameterType ="team5.services.bean.UserBean">
+	INSERT INTO MB(MB_ID,MB_PASSWORD,MB_NAME,MB_EMAIL) 
+	VALUES(#{uCode},#{uPassword},#{uName},#{email})
+</insert>
+
+</mapper>
