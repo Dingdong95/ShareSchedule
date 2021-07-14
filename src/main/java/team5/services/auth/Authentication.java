@@ -14,28 +14,44 @@ import team5.services.bean.UserBean;
 public class Authentication {
 	@Autowired
 	AuthDao dao;
-	private ModelAndView mav = null;
+	
+	//private ModelAndView mav = null;
+	
 	
 	//signIn check ctl
 	public ModelAndView isAccessCtl(AuthBean ab) {
+		boolean check = false;
+		ModelAndView mav = new ModelAndView();
 		
-		if(dao.isUcode(ab)) {
-			if(dao.isAccess(ab)) {
-				System.out.println("isaccess통과");
-				if(dao.insMemberHistory(ab)) {
-					mav = new ModelAndView();
-					ArrayList<UserBean> list = (ArrayList)dao.selMemberInfo(ab);
-					System.out.println(list.get(0).getEmail());
+		if(check = dao.isUcode(ab)) {
+			if(check = dao.isAccess(ab)) {
+				if(check = dao.insMemberHistory(ab)) {
+					//ArrayList<UserBean> list = (ArrayList)dao.selMemberInfo(ab);
+					mav.setViewName("dashBoard");
+					mav.addObject("umail", (dao.selMemberInfo(ab).get(0).getUMail()));
+				}
 				}
 			}
+		if(!check) {
+			mav.setViewName("signIn");
+			mav.addObject("message","정보확인하세요");
+		}
+		return mav;
 		}
 		
-		return mav;
-	}
+		
+	
 	
 
 	//join member control 
 	public ModelAndView insMemberCtl(UserBean ub) {
+		ModelAndView mav = new ModelAndView();
+		if(dao.insMember(ub)) {
+			mav.setViewName("signUp");
+			mav.addObject("message","회원가입 성공");
+		}
+		
+		
 		return mav;
 	}
 	

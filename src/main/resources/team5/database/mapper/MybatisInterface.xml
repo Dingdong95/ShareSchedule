@@ -12,7 +12,7 @@
 </select>
 
 <select id="isAccess" parameterType ="team5.services.bean.AuthBean" resultType="int">
-	SELECT COUNT(*) FROM MB WHERE MB_ID = #{UCode} AND MB_PASSWORD = #{uPassword}
+	SELECT COUNT(*) FROM MB WHERE MB_ID = #{uCode} AND MB_PASSWORD = #{uPassword}
 </select>
 
 <select id ="selMemberInfo" parameterType = "team5.services.bean.AuthBean" resultType ="team5.services.bean.UserBean" >
@@ -26,7 +26,7 @@
 
 <insert id="insMember" parameterType ="team5.services.bean.UserBean">
 	INSERT INTO MB(MB_ID,MB_PASSWORD,MB_NAME,MB_EMAIL) 
-	VALUES(#{uCode},#{uPassword},#{uName},#{email})
+	VALUES(#{uCode},#{uPassword},#{uName},#{uMail})
 </insert>
 
 </mapper>

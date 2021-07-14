@@ -1,5 +1,6 @@
 package team5.services.auth;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -36,12 +37,12 @@ public class AuthDao {
 
 	
 	 boolean insMember(UserBean ub) {
-		return this.convertType(sqlsession.insert("isUcode",ub));
+		return this.convertType(sqlsession.insert("insMember",ub));
 			
 	}
 	 
-	 List selMemberInfo(AuthBean ab){
-		 return (List)sqlsession.selectList("selMemberInfo", ab);
+	 ArrayList<UserBean> selMemberInfo(AuthBean ab){
+		 return (ArrayList)sqlsession.selectList("selMemberInfo", ab);
 	 }
 	
 	private boolean convertType(int result) {

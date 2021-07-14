@@ -11,6 +11,12 @@
     servlet context를 보면 resources mapping에서 경로를 지정해주고 있음 
     해당 폴더경로에 css와 js를 저장해야 인식함. -->
     <link type="text/css" rel="stylesheet" href="resources/css/style.css" />
+  <script>
+  const message = "${message}"
+  if(message != ""){
+	  alert(message);
+  }
+  </script>
   
   </head>
   <!-- <body onLoad="callMessage('${message }')">  -->
@@ -20,7 +26,7 @@
         <div id="login">Sign in</div>
         <div>
           <span class="grey">회원이 아니신가요?</span>
-          <span class="grey"><a id="toSignUp" href="signUp">가입하기</a></span>
+          <span class="grey"><a id="toSignUp" href="signUpForm">가입하기</a></span>
         </div>
       </div>
       <div class="section2">

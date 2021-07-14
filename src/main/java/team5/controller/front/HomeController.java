@@ -47,19 +47,28 @@ public class HomeController {
 	
 	// 이때 bean의 variable 이름이랑 request로 넘어오는 parameter의 name이랑 같아야 자동으로 bean에 저장이됨.
 	
+	
 	@PostMapping("/signIn")
 	public ModelAndView signIn(@ModelAttribute AuthBean ab) {
-		auth.isAccessCtl(ab);
-		return null;
+		
+		return auth.isAccessCtl(ab);
 	}	
 	
 	
 	//@RequestMapping(value = "/signUp", method = RequestMethod.GET)
-		@PostMapping("/signUp")
-		public ModelAndView signUp(@ModelAttribute UserBean ub) {
-			return mav = auth.insMemberCtl(ub);
+		@GetMapping("/signUpForm") //가입페이지 로딩 
+		public String signUpForm(@ModelAttribute UserBean ub) {
+			return "signUp";
 		}
 	
+		
+		@PostMapping("/signUp")
+		public ModelAndView signUp(@ModelAttribute UserBean ub) {
+			return auth.insMemberCtl(ub);
+		}
+		
+		//가입페이지에서 가입을 눌렀을때 하는 요청 
+		
 		@PostMapping("/dupCheck")
 		public boolean dupCheck(@ModelAttribute AuthBean ab) {
 			boolean isAble = false;
