@@ -6,7 +6,6 @@ let publicIp;
 /*************************************************************** */
 
 function sendAccessInfo() {
-	
 	/*
 	출력 해볼 것: 
 	location.href
@@ -83,54 +82,6 @@ function getAjax(jobCode, clientData,fn){
 	
 	//Step 4
 	ajax.send();
-}
-
-/*
-const getAjax = (jobCode, clientData, fn) => {
-	console.log(jobCode);
-	console.log(clientData);
-	console.log(fn);
-	 Step 1
-	let ajax = new XMLHttpRequest();
-	Step 2 
-	ajax.onreadystatechange = function(){
-		if(ajax.readyState == 4 && ajax.status == 200){
-			Step 5 
-			window[fn](JSON.parse(ajax.responseText));
-		}
-	};
-	
-	https: api.ipify.org?format = json
-	Step 3 
-	if(clientData != ""){jobCode += "?" + clientData;}
-
-	console.log(jobCode);
-	
-	ajax.open("GET", jobCode);
-	
-	Step 4
-	ajax.send();
-}
-*/
-
-function postAjax(jobCode, clientData, fn) {
-	let ajax = new XMLHttpRequest(); 
-	
-	ajax.onreadystatechange = function(){
-		if(ajax.readyState == 4 && ajax.status == 200){
-			/* Step 5 */
-			window[fn](JSON.parse(ajax.responseText));
-		}
-	};
-	
-	ajax.open("POST", jobCode);
-	
-	/*Step 4 */
-	ajax.send(clientData);
-}
-
-function setPublicIp(data)  {
-	publicIp = data.ip;
 }
 
 

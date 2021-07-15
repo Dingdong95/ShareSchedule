@@ -1,3 +1,11 @@
+.red{
+	color: red;
+}
+
+.green{
+	color:green;
+}
+
 .logInBox {
   width: 50%;
   
@@ -48,11 +56,23 @@
   margin: 10px;
 }
 
+#dupCheckBox{
+	width:300px;
+	height:50px;
+	color:black;
+	z-index:100;
+	display:show;
+}
+
 #passwordCheck {
   width: 300px;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+}
+
+#pwCheckBox{
+	color:red;
 }
 
 #passwordCheck span {

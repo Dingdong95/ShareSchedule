@@ -21,11 +21,15 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
+	<beans:bean class="com.google.gson.Gson"></beans:bean>
+	
 	<context:component-scan base-package="team5.controller.front" />
 	
 	<!-- mybatis-spring:component-scan base-package =  -->
 	
 	
 	<context:component-scan base-package ="team5.services.auth" />
+	
+	
 	
 </beans:beans>

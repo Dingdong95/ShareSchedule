@@ -1,8 +1,6 @@
 package team5.controller.front;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -15,10 +13,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import oracle.net.aso.e;
+
 import team5.services.auth.Authentication;
 import team5.services.bean.AuthBean;
 import team5.services.bean.UserBean;
@@ -70,8 +69,10 @@ public class HomeController {
 		//가입페이지에서 가입을 눌렀을때 하는 요청 
 		
 		@PostMapping("/dupCheck")
-		public boolean dupCheck(@ModelAttribute AuthBean ab) {
-			boolean isAble = false;
+		//ajax로 요청해서 ajax로 받을때 body의 일부분만 요청에 응답을 하겠다 는 annotation. 이걸 기본으로 하고 다른 기능을 강화한게 spring boot. spring boot는 api가 기본 
+		@ResponseBody
+		public String dupCheck(@ModelAttribute AuthBean ab) {
+			String isAble = null;
 			isAble = auth.isdupId(ab);
 			return isAble;
 		}

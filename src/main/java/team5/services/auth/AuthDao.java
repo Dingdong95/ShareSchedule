@@ -19,7 +19,6 @@ public class AuthDao {
 	
 	
 	 boolean isUcode(AuthBean ab) {
-		
 		return this.convertType(sqlsession.selectOne("isUcode",ab));
 	}
 

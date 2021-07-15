@@ -8,12 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SignUp</title>
     <link type="text/css" rel="stylesheet" href="resources/css/style.css" />
-    <script>
-  const message = "${message}"
-  if(message != ""){
-	  alert(message);
-  }
-  </script>
   </head>
   <!-- <body onLoad="callMessage('${message }')"> -->
   <body>
@@ -24,14 +18,18 @@
       </div>
       <div class="section2">
         <div class="idInput">
-          <input name = "uCode" type="text" placeholder="아이디" />
-          <button id="dupCheckBtn" onClick ="dupCheck()">중복확인</button>
+          <input id="id" name = "uCode" type="text" placeholder="아이디" onKeyUp = "korCheck(this, event)" />
+          <div>
+          <div id ="dupCheckBox"></div>
+          <input type= "button" id="dupCheckBtn" onClick ="dupCheck(this)" value="중복확인" />
+        	</div>
         </div>
 
-        <input name = "uPassword" type="password" placeholder="비밀번호" />
-        <input type="password" placeholder="비밀번호확인" />
-        <input name = "uName" type="text" placeholder="이름" />
-        <input name = "uMail" type="text" placeholder="이메일" />
+        <input id="password" name = "uPassword" type="password" placeholder="비밀번호" />
+        <input id="passwordCheck" type="password" placeholder="비밀번호확인" />
+        <div id = "pwCheckBox"></div>
+        <input id = "name" name = "uName" type="text" placeholder="이름" />
+        <input id="email" name = "uMail" type="text" placeholder="이메일" />
         <div id="passwordCheck">
           <span>비밀번호찾기</span>
         </div>
@@ -41,4 +39,5 @@
     </div>
   </body>
   <script type = "text/javascript" src= "resources/js/signUp.js"></script>
+  <script type = "text/javascript" src= "resources/js/index.js"></script>
 </html>
