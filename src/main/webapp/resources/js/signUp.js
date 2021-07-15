@@ -5,21 +5,18 @@ const password = document.getElementById("password");
 const passwordCheck = document.getElementById("passwordCheck");
 const pwCheckBox = document.getElementById("pwCheckBox");
 const dupCheckMsg = document.getElementById("dupCheckBox");
-/*
 const id = document.getElementById("id");
 const name = document.getElementById("name");
-const email = document.getElementById("email");
-*/
+
 /***************************************************************************/
 //eventlistener
 
 password.addEventListener("change", pwCheck);
 passwordCheck.addEventListener("change",pwCheck);
-/*
 id.addEventListener("change",pwCheck);
 name.addEventListener("change",pwCheck);
-email.addEventListener("change",pwCheck);
-*/
+
+
 
 /****************************************************************************/
 //초기값 세팅
@@ -31,23 +28,15 @@ signUpBtn.setAttribute("disabled","true");
 function pwCheck() {
 	let uCode = document.getElementsByName("uCode")[0];
 	let uName = document.getElementsByName("uName")[0];
-	let uMail = document.getElementsByName("uMail")[0];
 	
 	if(password.value != passwordCheck.value){
-		
 		pwCheckBox.innerHTML = "비밀번호가 일치하지않습니다.";
 		//pwCheckBox.classList.replace("green","red");
 		signUpBtn.setAttribute("disabled","true");
-		
-	}else if(password.value == passwordCheck.value){
+	}else{
 		pwCheckBox.innerHTML = "사용가능한 비밀번호입니다.";
-		//pwCheckBox.classList.replace("red","green");
-		
-		if(uCode.value != "" && uName.value != "" && uMail.value !=""){
-			signUpBtn.removeAttribute("disabled");
-			//signUpBtn.setAttribute("disabled","false");
-		}else{
-			signUpBtn.setAttribute("disabled","true");//죽임
+		if(uCode.value != "" && uName.value != ""){
+		signUpBtn.removeAttribute("disabled");
 		}
 	}
 }
