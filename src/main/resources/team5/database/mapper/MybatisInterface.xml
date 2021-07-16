@@ -7,16 +7,19 @@
 
 <!-- parameterType에 path설정까지 하지않으면 인식을 하지못함. 이걸 하려면 component scan을 할때 지정을 해줘야 함  -->
 
+<select id="getEncryptedPW" parameterType ="team5.services.bean.AuthBean" resultType="String">
+	SELECT MB_PASSWORD FROM MB WHERE MB_ID = #{uCode}
+</select>
+
+
 <select id="isUcode" parameterType ="team5.services.bean.AuthBean" resultType="int">
 	SELECT COUNT(*) FROM MB WHERE MB_ID = #{uCode}
 </select>
 
-<select id="isAccess" parameterType ="team5.services.bean.AuthBean" resultType="int">
-	SELECT COUNT(*) FROM MB WHERE MB_ID = #{uCode} AND MB_PASSWORD = #{uPassword}
-</select>
+
 
 <select id ="selMemberInfo" parameterType = "team5.services.bean.AuthBean" resultType ="team5.services.bean.UserBean" >
-	SELECT MB_ID AS UCODE, MB_NAME AS UNAME, MB_EMAIL AS EMAIL FROM MB WHERE MB_ID = #{uCode}
+	SELECT MB_ID AS UCODE, MB_NAME AS UNAME, MB_EMAIL AS UMAIL FROM MB WHERE MB_ID = #{uCode}
 </select>
 
 

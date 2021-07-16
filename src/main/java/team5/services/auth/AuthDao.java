@@ -17,17 +17,14 @@ public class AuthDao {
 	@Autowired
 	SqlSessionTemplate sqlsession;
 	
+	String getEncryptedPW(AuthBean ab) {
+		return sqlsession.selectOne("getEncryptedPW",ab);
+	}
 	
 	 boolean isUcode(AuthBean ab) {
 		return this.convertType(sqlsession.selectOne("isUcode",ab));
 	}
 
-	
-	 boolean isAccess(AuthBean ab) {
-		
-		
-		return this.convertType(sqlsession.selectOne("isAccess",ab));
-	}
 
 	
 	 boolean insMemberHistory(AuthBean ab) {

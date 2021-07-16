@@ -7,12 +7,12 @@
 <title>dashBoard</title>
 </head>
 <body>
- <script>
-  const umail = "${umail}"
-  if(umail != ""){
-	  alert(umail);
-  }
-  </script>
+
+<div>
+${umail}
+</div>
+
+<input type="button" value="로그아웃" onClick="logOut()"/>
 
 </body>
 </html>

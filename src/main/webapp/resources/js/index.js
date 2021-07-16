@@ -1,3 +1,7 @@
+function logOut
+
+
+
 function getAjax(jobCode, clientData, fn){
    /* Step 1*/
    let ajax = new XMLHttpRequest();

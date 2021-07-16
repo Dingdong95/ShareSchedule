@@ -1,6 +1,14 @@
 package team5.services.auth;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,21 +30,31 @@ public class Authentication {
 	Gson gson;
 	//private ModelAndView mav = null;
 	
+	@Autowired
+	Encryption enc;
 	
 	//signIn check ctl
 	public ModelAndView isAccessCtl(AuthBean ab) {
 		boolean check = false;
 		ModelAndView mav = new ModelAndView();
 		
+		String encPassword = dao.getEncryptedPW(ab);
+	
+
 		if(check = dao.isUcode(ab)) {
-			if(check = dao.isAccess(ab)) {
+			if(enc.matches(ab.getUPassword(), encPassword)) {
 				if(check = dao.insMemberHistory(ab)) {
 					//ArrayList<UserBean> list = (ArrayList)dao.selMemberInfo(ab);
 					mav.setViewName("dashBoard");
-					mav.addObject("umail", (dao.selMemberInfo(ab).get(0).getUMail()));
-				}
+					try {
+						mav.addObject("umail", enc.aesDecode((dao.selMemberInfo(ab).get(0).getUMail()), ab.getUCode()));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
+		}
 		if(!check) {
 			mav.setViewName("signIn");
 			mav.addObject("message","정보확인하세요");
@@ -56,6 +74,16 @@ public class Authentication {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("signUp");
 		mav.addObject("message","잠시 후 다시 시도해 주세요");
+		System.out.println(ub.getUCode());
+		
+		try {
+			ub.setUPassword(enc.encode(ub.getUPassword()));
+			ub.setUMail(enc.aesEncode(ub.getUMail(), ub.getUCode()));
+			ub.setUName(enc.aesEncode(ub.getUName(), ub.getUCode()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
 		
 		if(dao.insMember(ub)) {
 			mav.setViewName("signIn");
