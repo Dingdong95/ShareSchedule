@@ -9,9 +9,12 @@ import java.util.ArrayList;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
@@ -33,13 +36,45 @@ public class Authentication {
 	@Autowired
 	Encryption enc;
 	
+	public static HttpSession session() {
+	    ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+	    return attr.getRequest().getSession(true); // true == allow create
+	}
+	
+	public ModelAndView signOutCtl(AuthBean ab) {
+		ModelAndView mav = new ModelAndView();
+		
+		ab.setUCode(session().getAttribute("uCode").toString());
+		ab.setPublicIp(session().getAttribute("publicIp").toString());
+		ab.setPrivateIp(session().getAttribute("privateIp").toString());
+		ab.setMethod(Integer.parseInt(session().getAttribute("method").toString())-1);
+		
+		
+	
+		if(dao.selMemberHistory(ab)) {
+			if(dao.insMemberHistory(ab)) {
+				session().invalidate();
+				mav.setViewName("signIn");
+				mav.addObject("message","로그아웃성공");
+			}
+		}else {
+			mav.setViewName("dashBoard");
+			mav.addObject("message", "로그아웃실패");
+		}
+		
+		
+		return mav;
+	}
+	
+	
 	//signIn check ctl
 	public ModelAndView isAccessCtl(AuthBean ab) {
 		boolean check = false;
 		ModelAndView mav = new ModelAndView();
 		
 		String encPassword = dao.getEncryptedPW(ab);
-	
+		
+		
 
 		if(check = dao.isUcode(ab)) {
 			if(enc.matches(ab.getUPassword(), encPassword)) {
@@ -48,6 +83,10 @@ public class Authentication {
 					mav.setViewName("dashBoard");
 					try {
 						mav.addObject("umail", enc.aesDecode((dao.selMemberInfo(ab).get(0).getUMail()), ab.getUCode()));
+						session().setAttribute("uCode", ab.getUCode());
+						session().setAttribute("publicIp", ab.getPublicIp());
+						session().setAttribute("privateIp", ab.getPrivateIp());
+						session().setAttribute("method", ab.getMethod());
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

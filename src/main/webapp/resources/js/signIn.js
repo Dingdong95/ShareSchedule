@@ -30,6 +30,8 @@ function sendAccessInfo() {
 	const pupIp  = makeInput("hidden", "publicIp", publicIp);
 	
 	
+
+	
 	let form = makeForm("signIn","post");
 	
 	form.appendChild(uCode);
@@ -57,33 +59,25 @@ function makeForm (action, method, name = null){
 	return form;
 }
 
-
-function getAjax(jobCode, clientData,fn){
-	console.log(jobCode);
-	console.log(clientData);
-	console.log(fn);
-	 //Step 1
-	let ajax = new XMLHttpRequest();
-	//Step 2 
-	ajax.onreadystatechange = function(){
-		if(ajax.readyState == 4 && ajax.status == 200){
-			//Step 5 
-			window[fn](JSON.parse(ajax.responseText));
-		}
-	};
-	
-	//https: api.ipify.org?format = json
-	//Step 3 
-	if(clientData != ""){jobCode += "?" + clientData;}
-
-	console.log(jobCode);
-	
-	ajax.open("GET", jobCode);
-	
-	//Step 4
-	ajax.send();
+function getAjax(jobCode,clientData,fn){
+   
+   //step1
+   let ajax = new XMLHttpRequest();
+   
+   //step2
+   ajax.onreadystatechange = function(){
+      if(ajax.readyState == 4 && ajax.status == 200){
+         window[fn](JSON.parse(ajax.responseText));
+      }
+   };
+   
+   //step3
+   if(clientData != ""){ jobCode += "?" + clientData;}
+   ajax.open("GET",jobCode);
+   
+   //step4
+   ajax.send();
 }
-
 
 function makeInput  (type, name, value)  {
 	 let input = document.createElement("input");
@@ -91,6 +85,10 @@ function makeInput  (type, name, value)  {
 	input.setAttribute("name", name);
 	input.setAttribute("value", value);
  return input;
+}
+
+function setPublicIp(data){
+	publicIp = data.ip;
 }
 
 /*

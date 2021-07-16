@@ -32,4 +32,8 @@
 	VALUES(#{uCode},#{uPassword},#{uName},#{uMail})
 </insert>
 
+<select id ="selMemberHistory" parameterType = "team5.services.bean.AuthBean" resultType ="int" >
+	SELECT COUNT(*) FROM AH WHERE AH_MBID = #{uCode} AND AH_METHOD = #{method} AND AH_PUBLICIP = #{publicIp} AND AH_PRIVATEIP = #{privateIp}
+</select>
+
 </mapper>

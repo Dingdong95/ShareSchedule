@@ -15,4 +15,5 @@ public interface MybatisInterface {
 		 void insMemberHistory(AuthBean ab);
 		 void insMember(UserBean ub);
 		 List<UserBean>selMemberInfo(UserBean ub);
+		 int selMemberHistory(AuthBean ab);
 }

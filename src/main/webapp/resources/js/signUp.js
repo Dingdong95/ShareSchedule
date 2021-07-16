@@ -193,6 +193,5 @@ function charCount(length, min, max){
 		test = true;
 		return test;
 	}
-	console.log(test);
 	return test;
 }

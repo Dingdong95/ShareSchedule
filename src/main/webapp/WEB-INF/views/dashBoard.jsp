@@ -8,11 +8,16 @@
 </head>
 <body>
 
+<form action = "action"></form>
+
 <div>
 ${umail}
+
+${message}
 </div>
 
-<input type="button" value="로그아웃" onClick="logOut()"/>
+<input type="button" value="로그아웃" onClick="logOut()" />
 
 </body>
+<script type = "text/javascript" src= "resources/js/index.js"></script>
 </html>

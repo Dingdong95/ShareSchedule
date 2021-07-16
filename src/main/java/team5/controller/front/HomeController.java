@@ -53,6 +53,11 @@ public class HomeController {
 		return auth.isAccessCtl(ab);
 	}	
 	
+	@PostMapping("/signOut")
+	public ModelAndView signOut(@ModelAttribute AuthBean ab) {
+		
+		return auth.signOutCtl(ab);
+	}
 	
 	//@RequestMapping(value = "/signUp", method = RequestMethod.GET)
 		@GetMapping("/signUpForm") //가입페이지 로딩 
@@ -76,5 +81,7 @@ public class HomeController {
 			isAble = auth.isdupId(ab);
 			return isAble;
 		}
+		
+		
 		
 }
