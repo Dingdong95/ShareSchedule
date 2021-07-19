@@ -6,12 +6,14 @@
 <meta charset="UTF-8">
 <title>dashBoard</title>
 </head>
-<body>
+<body onLoad="getAjax('https://api.ipify.org', 'format=json', 'setPublicIp')">
 
 <form action = "action"></form>
 
 <div>
-${umail}
+
+
+<input name = "certification" type = "hidden" value = "${certification}" />
 
 ${message}
 </div>

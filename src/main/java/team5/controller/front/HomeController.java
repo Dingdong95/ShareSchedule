@@ -21,6 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 import team5.services.auth.Authentication;
 import team5.services.bean.AuthBean;
 import team5.services.bean.UserBean;
+import team5.services.util.Encryption;
+import team5.services.util.ProjectUtility;
 
 /**
  * Handles requests for the application home page.
@@ -29,19 +31,35 @@ import team5.services.bean.UserBean;
 public class HomeController {
 	
 	
-	ModelAndView mav;
+	ModelAndView mav = new ModelAndView();
 	@Autowired
 	Authentication auth;
-	
+	@Autowired
+	ProjectUtility pu;
+	@Autowired
+	Encryption enc;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = "/", method = {RequestMethod.GET,RequestMethod.POST})
-	public String signInForm(Locale locale, Model model) {
+	public ModelAndView signInForm(Locale locale, Model model) {
 		
-		return "signIn";
+		
+		try {
+			//로그인을 이미해서 session에 uCode가 들어가는 경우 
+			if(pu.getAttribute("uCode") != null) {
+				mav.setViewName("dashBoard");
+				mav.addObject("cert", enc.aesEncode((String)pu.getAttribute("uCode"),"logOut"));
+			}else {
+				mav.setViewName("signIn");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return mav;
 	}
 	
 	// 이때 bean의 variable 이름이랑 request로 넘어오는 parameter의 name이랑 같아야 자동으로 bean에 저장이됨.
@@ -49,6 +67,7 @@ public class HomeController {
 	
 	@PostMapping("/signIn")
 	public ModelAndView signIn(@ModelAttribute AuthBean ab) {
+	
 		
 		return auth.signInCtl(ab);
 	}	

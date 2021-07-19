@@ -17,4 +17,5 @@ public interface MybatisInterface {
 		 List<UserBean>selMemberInfo(UserBean ub);
 		 int selMemberHistory(AuthBean ab);
 		 boolean isAccess(AuthBean ab);
+		 
 }

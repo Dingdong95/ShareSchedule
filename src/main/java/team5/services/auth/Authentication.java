@@ -39,50 +39,57 @@ public class Authentication {
 	Encryption enc;
 	
 	@Autowired
-	ProjectUtility util;
-	
-	public static HttpSession session() {
-	    ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-	    return attr.getRequest().getSession(true); // true == allow create
-	}
+	ProjectUtility pu;
 	
 	public ModelAndView signOutCtl(AuthBean ab) {
 		ModelAndView mav = new ModelAndView();
 		boolean check = false;
 		
-		ab.setUCode(session().getAttribute("uCode").toString());
-		ab.setPublicIp(session().getAttribute("publicIp").toString());
-		ab.setPrivateIp(session().getAttribute("privateIp").toString());
-		ab.setMethod(Integer.parseInt(session().getAttribute("method").toString()));
 		
-		
-		
-	if(dao.isAccess(ab)) {
-		if(dao.selMemberHistory(ab) && (session().getId() == session().getAttribute("sessionId"))) {
-			ab.setMethod(Integer.parseInt(session().getAttribute("method").toString())-2);
-			//같은 BROWSER에선 안됨. 
-			System.out.println(session().getId() + " : " + session().getAttribute("sessionId"));
-			//SESSION이 살아있다면 계속 진행 
-			while(!check) {
-				dao.insMemberHistory(ab);
-				check = true;
-				session().invalidate();
-				mav.setViewName("signIn");
-				mav.addObject("message","로그아웃성공");
+		try {
+			if(pu.getAttribute("uCode") != null) {
+				mav.setViewName("dashBaord");
+				ab.setCertification(ab.getUCode());
+				mav.addObject("certification");
+			}else {
+				ab.setUCode(enc.aesDecode(ab.getCertification(), "LogOut"));
+				if(pu.getAttribute("uCode") != null) {
+					//check가 false일동안 = while의 조건이 true일동안,  while 반복문을 돌리는데 
+					while(!check) {
+						//accesshistory테이블에 로그아웃을 기록해라 > 실제 로그아웃이 되는 시점 
+						if(dao.insMemberHistory(ab)) {
+						 check = true; 	
+						}
+					}
+					pu.removeAttribute("uCode");
+					pu.setAttribute("logOut", true);
+					mav.setViewName("redirect:/");
+					mav.addObject("message", "정상 로그아웃 되었습니다.");
+				}else {
+					mav.setViewName("redirect:/");
+					mav.addObject("message", "이미로그아웃되었습니다.");
+				}
 			} 
-		}else {
-			mav.setViewName("dashBoard");
-			mav.addObject("message", "로그아웃실패");
-		}
-	}else {
-		mav.setViewName("signIn");
-		mav.addObject("message", "로그아웃되었습니다");
+			}catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			
+
 	}
-		
-		
-		
 		return mav;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	//signIn check ctl
@@ -90,35 +97,46 @@ public class Authentication {
 		boolean check = false;
 		ModelAndView mav = new ModelAndView();
 		
+		//db password 
 		String encPassword = dao.getEncryptedPW(ab);
 		
 		
+		
 
-		if(check = dao.isUcode(ab)) {
-			if(enc.matches(ab.getUPassword(), encPassword)) {
-				if(check = dao.insMemberHistory(ab)) {
-					//ArrayList<UserBean> list = (ArrayList)dao.selMemberInfo(ab);
-					mav.setViewName("dashBoard");
-					try {
-						//로그인을 할때 publiIp, privateIp, sessionId를 배열에 저장을하고 (얘네가 primary key)
-						// 
-						mav.addObject("umail", enc.aesDecode((dao.selMemberInfo(ab).get(0).getUMail()), ab.getUCode()));
-						session().setAttribute("uCode", ab.getUCode());
-						session().setAttribute("publicIp", ab.getPublicIp());
-						session().setAttribute("privateIp", ab.getPrivateIp());
-						session().setAttribute("method", ab.getMethod());
-						session().setAttribute("sessionId", session().getId());
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+		try {
+			//그냥 새로 고침 할때 SIGNiN을 다시 요청해서 여기서 먼저 SESSION이 살아 있는지 확인 하고 넘어가 줘야함 
+			// F5를 하면 계속 FORM.SUBMIT을 때려서 MAV는 초기화 되고 SESSION은 남아서 여기서 계속 다시 넣어 줘야함 
+			if(pu.getAttribute("logOut") != null && (boolean)pu.getAttribute("logOut")) {
+				pu.setAttribute("logOut", false);
+				mav.setViewName("redirect:/");
+				mav.addObject("message", "이미 로그아웃되었습니다. 다시 접속해 주세요");
+			}else {
+				//session에 아이디가 있는지 없는지 확인 
+				//전에 로그인한 기록이 없으면 통과 
+				if(check = (pu.getAttribute("uCode") == null)) {
+					//니가 입력한 비밀번호가 db에 있을경우 통과 > 제대로된 비밀번호인지 확인 및 회원가입 확인 
+					if(check = (encPassword !=null)) {
+						//사용자가 입력한 비밀번호와 db에 비밀번호의 일치여부 확인 
+						if(check = enc.matches(ab.getUPassword(), encPassword)) {
+							//로그인 = acccesshistory table에 기록 남김 
+							if(check = dao.insMemberHistory(ab)) {
+								// session에 아이디와  로그아웃여부를 저장 
+								pu.setAttribute("uCode", ab.getUCode());
+								pu.setAttribute("logOut", false);
+								mav.addObject("certification", enc.aesEncode(ab.getUCode(), "LogOut"));
+								mav.setViewName("dashBoard");
+							}
+						}
+					}else if(!check) {
+						mav.setViewName("signIn");
+						mav.addObject("message","정보확인하세요");
 					}
 				}
 			}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
-		if(!check) {
-			mav.setViewName("signIn");
-			mav.addObject("message","정보확인하세요");
-		}
+		
 		return mav;
 		}
 		

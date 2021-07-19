@@ -1,8 +1,8 @@
 
 /* 전역변수 */
 const logInBtn = document.getElementById("logInBtn");
-let publicIp;
 
+let publicIp;
 /*************************************************************** */
 
 function sendAccessInfo() {

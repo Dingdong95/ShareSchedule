@@ -1,8 +1,21 @@
+/*전역변수 */
+let publicIp;
+
+/******************************************************** */
 function logOut() {
 	//jsp에서 넘어온 name 값으로 가져옴 
 	//jsp name 자체를 servlet에서 인식을함 form 기준이 아니라
+	const cert = document.getElementsByName("certification")[0];
+	const method = makeInput("hidden", "method",-1);
+	const privateIp = makeInput("hidden","privateIp",location.host);
+	const pupIp  = makeInput("hidden", "publicIp", publicIp);
 	
 	let form = makeForm("signOut","post");
+	
+	form.appendChild(cert);
+	form.appendChild(method);
+	form.appendChild(privateIp);
+	form.appendChild(pupIp);
 	
 	document.body.appendChild(form);
 	
@@ -43,6 +56,14 @@ function getAjax(jobCode, clientData, fn){
          window[fn](JSON.parse(ajax.responseText));
       }
    }
+   /* Step 3 */
+   if(clientData != ""){ jobCode += "?" + clientData; }
+   ajax.open("GET", jobCode);
+   /* Step 4 */
+   ajax.send();
 }
 
+function setPublicIp(data){
+	publicIp = data.ip;
+}
 

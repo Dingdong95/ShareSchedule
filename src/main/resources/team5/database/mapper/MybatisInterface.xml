@@ -24,7 +24,7 @@
 
 
 <insert id="insMemberHistory" parameterType ="team5.services.bean.AuthBean">
-	INSERT INTO AH VALUES (#{uCode},SYSDATE,#{method},#{publicIp},#{privateIp})
+	INSERT INTO AH VALUES (#{uCode}, SYSDATE, #{method}, #{publicIp}, #{privateIp})
 </insert>
 
 <insert id="insMember" parameterType ="team5.services.bean.UserBean">

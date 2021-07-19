@@ -11,4 +11,5 @@ public class AuthBean {
 	private int method;
 	private String publicIp;
 	private String privateIp;
+	private String certification;
 }
