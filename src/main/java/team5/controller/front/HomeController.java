@@ -50,7 +50,7 @@ public class HomeController {
 	@PostMapping("/signIn")
 	public ModelAndView signIn(@ModelAttribute AuthBean ab) {
 		
-		return auth.isAccessCtl(ab);
+		return auth.signInCtl(ab);
 	}	
 	
 	@PostMapping("/signOut")

@@ -44,6 +44,10 @@ public class AuthDao {
 	 boolean selMemberHistory(AuthBean ab){
 		 return this.convertType(sqlsession.selectOne("selMemberHistory",ab));
 	 }
+	 
+	 boolean isAccess(AuthBean ab) {
+		 return this.convertType(sqlsession.selectOne("isAccess",ab));
+	 }
 	
 	private boolean convertType(int result) {
 		return (result>0) ? true:false ;

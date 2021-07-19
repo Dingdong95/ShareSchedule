@@ -36,4 +36,7 @@
 	SELECT COUNT(*) FROM AH WHERE AH_MBID = #{uCode} AND AH_METHOD = #{method} AND AH_PUBLICIP = #{publicIp} AND AH_PRIVATEIP = #{privateIp}
 </select>
 
+<select id = "isAccess" parameterType = "team5.services.bean.AuthBean" resultType = "int">
+	SELECT SUM(AH_METHOD) FROM AH WHERE AH_MBID = #{uCode} AND AH_METHOD = #{method} AND AH_PUBLICIP = #{publicIp} AND AH_PRIVATEIP = #{privateIp}
+</select>
 </mapper>

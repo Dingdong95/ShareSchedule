@@ -30,6 +30,6 @@
 	
 	<context:component-scan base-package ="team5.services.auth" />
 	
-	
+	<context:component-scan base-package = "team5.services.util" />
 	
 </beans:beans>

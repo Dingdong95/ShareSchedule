@@ -21,6 +21,8 @@ import com.google.gson.Gson;
 
 import team5.services.bean.AuthBean;
 import team5.services.bean.UserBean;
+import team5.services.util.Encryption;
+import team5.services.util.ProjectUtility;
 
 // 여기서 access modifier 때문에 private method들을 사용하지 못하기때문에 dao를 생성 
 
@@ -36,6 +38,9 @@ public class Authentication {
 	@Autowired
 	Encryption enc;
 	
+	@Autowired
+	ProjectUtility util;
+	
 	public static HttpSession session() {
 	    ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 	    return attr.getRequest().getSession(true); // true == allow create
@@ -43,24 +48,37 @@ public class Authentication {
 	
 	public ModelAndView signOutCtl(AuthBean ab) {
 		ModelAndView mav = new ModelAndView();
+		boolean check = false;
 		
 		ab.setUCode(session().getAttribute("uCode").toString());
 		ab.setPublicIp(session().getAttribute("publicIp").toString());
 		ab.setPrivateIp(session().getAttribute("privateIp").toString());
-		ab.setMethod(Integer.parseInt(session().getAttribute("method").toString())-1);
+		ab.setMethod(Integer.parseInt(session().getAttribute("method").toString()));
 		
 		
-	
-		if(dao.selMemberHistory(ab)) {
-			if(dao.insMemberHistory(ab)) {
+		
+	if(dao.isAccess(ab)) {
+		if(dao.selMemberHistory(ab) && (session().getId() == session().getAttribute("sessionId"))) {
+			ab.setMethod(Integer.parseInt(session().getAttribute("method").toString())-2);
+			//같은 BROWSER에선 안됨. 
+			System.out.println(session().getId() + " : " + session().getAttribute("sessionId"));
+			//SESSION이 살아있다면 계속 진행 
+			while(!check) {
+				dao.insMemberHistory(ab);
+				check = true;
 				session().invalidate();
 				mav.setViewName("signIn");
 				mav.addObject("message","로그아웃성공");
-			}
+			} 
 		}else {
 			mav.setViewName("dashBoard");
 			mav.addObject("message", "로그아웃실패");
 		}
+	}else {
+		mav.setViewName("signIn");
+		mav.addObject("message", "로그아웃되었습니다");
+	}
+		
 		
 		
 		return mav;
@@ -68,7 +86,7 @@ public class Authentication {
 	
 	
 	//signIn check ctl
-	public ModelAndView isAccessCtl(AuthBean ab) {
+	public ModelAndView signInCtl(AuthBean ab) {
 		boolean check = false;
 		ModelAndView mav = new ModelAndView();
 		
@@ -82,11 +100,14 @@ public class Authentication {
 					//ArrayList<UserBean> list = (ArrayList)dao.selMemberInfo(ab);
 					mav.setViewName("dashBoard");
 					try {
+						//로그인을 할때 publiIp, privateIp, sessionId를 배열에 저장을하고 (얘네가 primary key)
+						// 
 						mav.addObject("umail", enc.aesDecode((dao.selMemberInfo(ab).get(0).getUMail()), ab.getUCode()));
 						session().setAttribute("uCode", ab.getUCode());
 						session().setAttribute("publicIp", ab.getPublicIp());
 						session().setAttribute("privateIp", ab.getPrivateIp());
 						session().setAttribute("method", ab.getMethod());
+						session().setAttribute("sessionId", session().getId());
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -113,7 +134,6 @@ public class Authentication {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("signUp");
 		mav.addObject("message","잠시 후 다시 시도해 주세요");
-		System.out.println(ub.getUCode());
 		
 		try {
 			ub.setUPassword(enc.encode(ub.getUPassword()));
