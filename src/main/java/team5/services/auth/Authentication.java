@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,121 +29,116 @@ import team5.services.util.ProjectUtility;
 
 @Service
 public class Authentication {
+	HttpSession session;
+
 	@Autowired
 	AuthDao dao;
-	
+
 	@Autowired
 	Gson gson;
 	//private ModelAndView mav = null;
-	
+
 	@Autowired
 	Encryption enc;
-	
+
 	@Autowired
 	ProjectUtility pu;
 	
-	public ModelAndView signOutCtl(AuthBean ab) {
+	
+	public ModelAndView signOutCtl(HttpServletRequest req, AuthBean ab) {
 		ModelAndView mav = new ModelAndView();
 		boolean check = false;
-		
-		
-		try {
-			if(pu.getAttribute("uCode") != null) {
-				mav.setViewName("dashBaord");
-				ab.setCertification(ab.getUCode());
-				mav.addObject("certification");
-			}else {
-				ab.setUCode(enc.aesDecode(ab.getCertification(), "LogOut"));
-				if(pu.getAttribute("uCode") != null) {
-					//check가 false일동안 = while의 조건이 true일동안,  while 반복문을 돌리는데 
-					while(!check) {
-						//accesshistory테이블에 로그아웃을 기록해라 > 실제 로그아웃이 되는 시점 
-						if(dao.insMemberHistory(ab)) {
-						 check = true; 	
-						}
-					}
-					pu.removeAttribute("uCode");
-					pu.setAttribute("logOut", true);
-					mav.setViewName("redirect:/");
-					mav.addObject("message", "정상 로그아웃 되었습니다.");
-				}else {
-					mav.setViewName("redirect:/");
-					mav.addObject("message", "이미로그아웃되었습니다.");
-				}
-			} 
-			}catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			
 
-	}
+		try {
+			ab.setUCode(enc.aesDecode(ab.getCertification(), "logOut"));
+			ab.setBrowser(this.getBrowserInfo(req, "others"));
+			if(pu.getAttribute("uCode") != null) {
+				//check가 false일동안 = while의 조건이 true일동안,  while 반복문을 돌리는데 
+				while(!check) {
+					//accesshistory테이블에 로그아웃을 기록해라 > 실제 로그아웃이 되는 시점 
+					check = dao.insMemberHistory(ab);
+				}
+				//여기서 session자체를 지워 그대신 원래 sessionId만 기억해 
+				pu.removeAttribute("uCode");
+				mav.setViewName("redirect:/");
+				mav.addObject("message", "정상 로그아웃 되었습니다.");
+
+			}else {
+				mav.setViewName("redirect:/");
+				mav.addObject("message", "이미로그아웃되었습니다.");
+			}
+		}catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return mav;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	//signIn check ctl
-	public ModelAndView signInCtl(AuthBean ab) {
+	public ModelAndView signInCtl(HttpServletRequest req, AuthBean ab) {
 		boolean check = false;
 		ModelAndView mav = new ModelAndView();
 		
-		//db password 
-		String encPassword = dao.getEncryptedPW(ab);
-		
-		
 		
 
+		//db password 
+		String encPassword = dao.getEncryptedPW(ab);
+
+		ab.setBrowser(this.getBrowserInfo(req, "others"));
+		
+		
 		try {
 			//그냥 새로 고침 할때 SIGNiN을 다시 요청해서 여기서 먼저 SESSION이 살아 있는지 확인 하고 넘어가 줘야함 
 			// F5를 하면 계속 FORM.SUBMIT을 때려서 MAV는 초기화 되고 SESSION은 남아서 여기서 계속 다시 넣어 줘야함 
-			if(pu.getAttribute("logOut") != null && (boolean)pu.getAttribute("logOut")) {
-				pu.setAttribute("logOut", false);
-				mav.setViewName("redirect:/");
-				mav.addObject("message", "이미 로그아웃되었습니다. 다시 접속해 주세요");
-			}else {
 				//session에 아이디가 있는지 없는지 확인 
 				//전에 로그인한 기록이 없으면 통과 
-				if(check = (pu.getAttribute("uCode") == null)) {
+				if(check = (pu.getAttribute("uCode") == null)) {	
 					//니가 입력한 비밀번호가 db에 있을경우 통과 > 제대로된 비밀번호인지 확인 및 회원가입 확인 
 					if(check = (encPassword !=null)) {
 						//사용자가 입력한 비밀번호와 db에 비밀번호의 일치여부 확인 
 						if(check = enc.matches(ab.getUPassword(), encPassword)) {
 							//로그인 = acccesshistory table에 기록 남김 
 							if(check = dao.insMemberHistory(ab)) {
+								//처음 세션 생성 
 								// session에 아이디와  로그아웃여부를 저장 
 								pu.setAttribute("uCode", ab.getUCode());
-								pu.setAttribute("logOut", false);
-								mav.addObject("certification", enc.aesEncode(ab.getUCode(), "LogOut"));
-								mav.setViewName("dashBoard");
+								//여기서 sessionId를 넘겨줘 (최초 로그인) 
+								mav.setViewName("redirect:/");
 							}
 						}
-					}else if(!check) {
-						mav.setViewName("signIn");
-						mav.addObject("message","정보확인하세요");
 					}
 				}
-			}
+				else if(!check) {
+					mav.setViewName("signIn");
+					mav.addObject("message","정보확인하세요");
+				}
+
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		
+
 		return mav;
+	}
+
+
+	public ModelAndView signInForm() {
+		ModelAndView mav = new ModelAndView();
+		try {
+			//로그인을 이미해서 session에 uCode가 들어가는 경우 
+			if(pu.getAttribute("uCode") != null) {
+				mav.setViewName("dashBoard");
+				mav.addObject("certification", enc.aesEncode((String)pu.getAttribute("uCode"),"logOut"));
+			}else {
+				mav.setViewName("signIn");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		
-	
-	
+		return mav;
+	}
+
 
 	//join member control 
 	//중복검사를 한 시점과 실제로 회원가입을 하는 시점이 다르기 때문에 여기서 사실상 한번 더 해줘야함
@@ -152,7 +148,7 @@ public class Authentication {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("signUp");
 		mav.addObject("message","잠시 후 다시 시도해 주세요");
-		
+
 		try {
 			ub.setUPassword(enc.encode(ub.getUPassword()));
 			ub.setUMail(enc.aesEncode(ub.getUMail(), ub.getUCode()));
@@ -160,17 +156,17 @@ public class Authentication {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
-		
+
+
 		if(dao.insMember(ub)) {
 			mav.setViewName("signIn");
 			mav.addObject("message","회원가입 성공. 다시 로그인해주세요");
 		}
-		
-		
+
+
 		return mav;
 	}
-	
+
 	public String isdupId(AuthBean ab) {
 		boolean message = false;
 		if(!dao.isUcode(ab)) {
@@ -179,4 +175,33 @@ public class Authentication {
 		//json 형식 {"message:", "true"}
 		return gson.toJson(message);
 	}
+	
+	
+	protected String getBrowserInfo(HttpServletRequest req, String browser) {
+		try {
+			String browserInfo = req.getHeader("User-Agent"); // 사용자 User-Agent 값 얻기
+	
+			if (browserInfo != null) {
+				if (browserInfo.indexOf("Trident") > -1) {
+					browser = "MSIE";
+				} else if (browserInfo.indexOf("Chrome") > -1) {
+					browser = "Chrome";
+				} else if (browserInfo.indexOf("Opera") > -1) {
+					browser = "Opera";
+				} else if (browserInfo.indexOf("iPhone") > -1
+						&& browserInfo.indexOf("Mobile") > -1) {
+					browser = "iPhone";
+				} else if (browserInfo.indexOf("Android") > -1
+						&& browserInfo.indexOf("Mobile") > -1) {
+					browser = "Android";
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return browser;
+	}
+	
+	
+	
 }

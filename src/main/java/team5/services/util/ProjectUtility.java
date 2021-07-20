@@ -2,6 +2,7 @@ package team5.services.util;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.stereotype.Component;
@@ -49,6 +50,4 @@ public class ProjectUtility {
         return RequestContextHolder.getRequestAttributes().getSessionId();
     }
     
-
-
 }

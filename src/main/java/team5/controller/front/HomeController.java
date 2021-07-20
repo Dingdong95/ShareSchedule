@@ -3,6 +3,8 @@ package team5.controller.front;
 
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,37 +47,23 @@ public class HomeController {
 	 */
 	@RequestMapping(value = "/", method = {RequestMethod.GET,RequestMethod.POST})
 	public ModelAndView signInForm(Locale locale, Model model) {
-		
-		
-		try {
-			//로그인을 이미해서 session에 uCode가 들어가는 경우 
-			if(pu.getAttribute("uCode") != null) {
-				mav.setViewName("dashBoard");
-				mav.addObject("cert", enc.aesEncode((String)pu.getAttribute("uCode"),"logOut"));
-			}else {
-				mav.setViewName("signIn");
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return mav;
+
+		return auth.signInForm();
 	}
 	
 	// 이때 bean의 variable 이름이랑 request로 넘어오는 parameter의 name이랑 같아야 자동으로 bean에 저장이됨.
 	
 	
 	@PostMapping("/signIn")
-	public ModelAndView signIn(@ModelAttribute AuthBean ab) {
-	
+	public ModelAndView signIn(HttpServletRequest req, @ModelAttribute AuthBean ab) {
 		
-		return auth.signInCtl(ab);
+		return auth.signInCtl(req,ab);
 	}	
 	
 	@PostMapping("/signOut")
-	public ModelAndView signOut(@ModelAttribute AuthBean ab) {
+	public ModelAndView signOut(HttpServletRequest req, @ModelAttribute AuthBean ab) {
 		
-		return auth.signOutCtl(ab);
+		return auth.signOutCtl(req,ab);
 	}
 	
 	//@RequestMapping(value = "/signUp", method = RequestMethod.GET)
