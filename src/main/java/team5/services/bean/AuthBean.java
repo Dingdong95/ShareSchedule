@@ -13,4 +13,5 @@ public class AuthBean {
 	private String privateIp;
 	private String certification;
 	private String browser;
+	private int unSignedOut;
 }

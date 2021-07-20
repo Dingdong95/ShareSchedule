@@ -43,8 +43,8 @@ public class Authentication {
 
 	@Autowired
 	ProjectUtility pu;
-	
-	
+
+
 	public ModelAndView signOutCtl(HttpServletRequest req, AuthBean ab) {
 		ModelAndView mav = new ModelAndView();
 		boolean check = false;
@@ -76,47 +76,93 @@ public class Authentication {
 
 	//signIn check ctl
 	public ModelAndView signInCtl(HttpServletRequest req, AuthBean ab) {
+		System.out.println("여기 SIGNINcTL 들어옴?");
+		
+		String[] browserList = {"MSIE","Opera","Edge","iPhone","Android","Chrome","Others"};
+		String[] openBrowser = new String[7];
+		ArrayList<AuthBean> openBrowserBean = new ArrayList<AuthBean>();
 		boolean check = false;
 		ModelAndView mav = new ModelAndView();
-		
-		
+		ab.setBrowser(this.getBrowserInfo(req, "others"));
+		String thisBrowser = ab.getBrowser();
+		ab.setBrowser(null);
+
 
 		//db password 
 		String encPassword = dao.getEncryptedPW(ab);
 
-		ab.setBrowser(this.getBrowserInfo(req, "others"));
+		for(int i = 0; i<browserList.length; i++) {
+			ab.setBrowser(browserList[i]);
+			if(dao.checkBrowserExist(ab)) {
+				openBrowser[i] = ab.getBrowser();
+			}
+		}
+
+
+
+		for(int i = 0; i < openBrowser.length; i++) {
+			if(openBrowser[i] != null) {
+				ab.setBrowser(openBrowser[i]);
+				if(dao.checkOtherLogs(ab)) {
+					openBrowserBean.add(ab);
+				}
+			}
+		}
 		
 		
+
+
+		//if db에 열려있는 계정이 있는지 확인 
+		if(openBrowserBean.size() != 0) {
+			System.out.println(openBrowserBean.get(0).getBrowser());
+			ab.setMethod(-1);
+			ab.setBrowser(openBrowserBean.get(0).getBrowser());
+			dao.insMemberHistory(ab);
+		}
+
+		ab.setMethod(1);
+		ab.setBrowser(thisBrowser);
+		//System.out.println(ab.getBrowser() + ab.getMethod() + ab.getPrivateIp() + ab.getPublicIp() + ab.getUCode());
+		//현재 로그인한 브라우저가 어떤것인지 알려줌 
+
 		try {
 			//그냥 새로 고침 할때 SIGNiN을 다시 요청해서 여기서 먼저 SESSION이 살아 있는지 확인 하고 넘어가 줘야함 
 			// F5를 하면 계속 FORM.SUBMIT을 때려서 MAV는 초기화 되고 SESSION은 남아서 여기서 계속 다시 넣어 줘야함 
-				//session에 아이디가 있는지 없는지 확인 
-				//전에 로그인한 기록이 없으면 통과 
-				if(check = (pu.getAttribute("uCode") == null)) {	
-					//니가 입력한 비밀번호가 db에 있을경우 통과 > 제대로된 비밀번호인지 확인 및 회원가입 확인 
-					if(check = (encPassword !=null)) {
-						//사용자가 입력한 비밀번호와 db에 비밀번호의 일치여부 확인 
-						if(check = enc.matches(ab.getUPassword(), encPassword)) {
-							//로그인 = acccesshistory table에 기록 남김 
-							if(check = dao.insMemberHistory(ab)) {
-								//처음 세션 생성 
-								// session에 아이디와  로그아웃여부를 저장 
-								pu.setAttribute("uCode", ab.getUCode());
-								//여기서 sessionId를 넘겨줘 (최초 로그인) 
-								mav.setViewName("redirect:/");
-							}
+			//session에 아이디가 있는지 없는지 확인 
+			//전에 로그인한 기록이 없으면 통과 
+			System.out.println(ab.getBrowser() + ab.getUCode() + ab.getPrivateIp() + ab.getPublicIp() + ab.getMethod());
+			if((pu.getAttribute("uCode") != null) && !dao.checkOtherLogs(ab)) {	
+				pu.removeAttribute("uCode");
+				mav.setViewName("redirect:/");
+			}else {
+				//니가 입력한 비밀번호가 db에 있을경우 통과 > 제대로된 비밀번호인지 확인 및 회원가입 확인 
+				if(check = (encPassword !=null)) {
+					//사용자가 입력한 비밀번호와 db에 비밀번호의 일치여부 확인 
+					if(check = enc.matches(ab.getUPassword(), encPassword)) {
+						//로그인 = acccesshistory table에 기록 남김 
+						if(check = dao.insMemberHistory(ab)) {
+							//처음 세션 생성 
+							// session에 아이디와  로그아웃여부를 저장 
+							pu.setAttribute("uCode", ab.getUCode());
+							//여기서 sessionId를 넘겨줘 (최초 로그인) 
+							mav.setViewName("redirect:/");
 						}
 					}
-				}
-				else if(!check) {
+				}else if(!check) {
 					mav.setViewName("signIn");
 					mav.addObject("message","정보확인하세요");
 				}
+			}
 
-			
+
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+
+
+		//dao.checkOtherLogs(ab);
+		//arraylist 들음 
+
 
 		return mav;
 	}
@@ -175,25 +221,27 @@ public class Authentication {
 		//json 형식 {"message:", "true"}
 		return gson.toJson(message);
 	}
-	
-	
+
+
 	protected String getBrowserInfo(HttpServletRequest req, String browser) {
 		try {
-			String browserInfo = req.getHeader("User-Agent"); // 사용자 User-Agent 값 얻기
-	
+			String browserInfo = req.getHeader("User-Agent").toLowerCase(); // 사용자 User-Agent 값 얻기
+
 			if (browserInfo != null) {
-				if (browserInfo.indexOf("Trident") > -1) {
+				if (browserInfo.indexOf("trident") > -1) {
 					browser = "MSIE";
-				} else if (browserInfo.indexOf("Chrome") > -1) {
-					browser = "Chrome";
-				} else if (browserInfo.indexOf("Opera") > -1) {
+				} else if (browserInfo.indexOf("opera") > -1) {
 					browser = "Opera";
+				} else if(browserInfo.indexOf("edg") > -1){
+					browser = "Edge";
 				} else if (browserInfo.indexOf("iPhone") > -1
-						&& browserInfo.indexOf("Mobile") > -1) {
+						&& browserInfo.indexOf("mobile") > -1) {
 					browser = "iPhone";
-				} else if (browserInfo.indexOf("Android") > -1
-						&& browserInfo.indexOf("Mobile") > -1) {
+				} else if (browserInfo.indexOf("android") > -1
+						&& browserInfo.indexOf("mobile") > -1) {
 					browser = "Android";
+				}else if (browserInfo.indexOf("chrome") > -1) {
+					browser = "Chrome";
 				}
 			}
 		} catch (Exception e) {
@@ -201,7 +249,7 @@ public class Authentication {
 		}
 		return browser;
 	}
-	
-	
-	
+
+
+
 }

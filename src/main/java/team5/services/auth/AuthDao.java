@@ -52,4 +52,20 @@ public class AuthDao {
 	private boolean convertType(int result) {
 		return (result>0) ? true:false ;
 	}
+
+	boolean checkOtherLogs(AuthBean ab) {
+		//int total = sqlsession.selectOne("checkOtherLogs", ab);
+		
+		return this.convertType(sqlsession.selectOne("checkOtherLogs", ab)) ;
+		// TODO Auto-generated method stub
+		
+	}
+
+	boolean checkBrowserExist(AuthBean ab) {
+		boolean check = false;
+		if((int)sqlsession.selectOne("checkBrowserExist",ab) > 0) {
+			check = true;
+		}
+		return check;
+	}
 }

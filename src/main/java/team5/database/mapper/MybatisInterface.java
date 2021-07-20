@@ -16,6 +16,7 @@ public interface MybatisInterface {
 		 void insMember(UserBean ub);
 		 List<UserBean>selMemberInfo(UserBean ub);
 		 int selMemberHistory(AuthBean ab);
-		 boolean isAccess(AuthBean ab);
+		 List<AuthBean>checkOtherLogs(AuthBean ub);
+		 boolean checkBrowserExist(AuthBean ab);
 		 
 }
